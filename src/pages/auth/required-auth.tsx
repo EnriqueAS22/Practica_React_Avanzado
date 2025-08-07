@@ -1,13 +1,13 @@
 import type { ReactNode } from "react";
-import { useAuth } from "./context";
 import { Navigate, useLocation } from "react-router";
+import { useAppSelector } from "../../store";
 
 interface RequiredAuthProps {
   children: ReactNode;
 }
 
 function RequiredAuth({ children }: RequiredAuthProps) {
-  const { isLogged } = useAuth();
+  const isLogged = useAppSelector((state) => state.auth);
   const location = useLocation();
 
   if (!isLogged) {
