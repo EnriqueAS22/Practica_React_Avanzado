@@ -1,0 +1,19 @@
+.adverts-page-empty {
+  text-align: center;
+}
+
+.advert-page-delete-button {
+  margin-top: 1rem;
+  background-color: #e74c3c;
+  color: white;
+}
+
+.delete-button {
+  color: white !important;
+  background-color: #e74c3c !important;
+  border-color: #e74c3c !important;
+}
+
+.delete-button:hover {
+  background-color: #c0392b !important;
+}

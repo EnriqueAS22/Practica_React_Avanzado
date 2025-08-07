@@ -1,0 +1,27 @@
+.new-advert-page {
+  display: flex;
+  gap: 10px;
+  padding: 10px 15px 10px 15px;
+}
+
+.new-advert-page-form {
+  flex: 1;
+}
+
+.new-advert-page-textarea {
+  margin-bottom: 10px;
+  border-bottom: 1px solid rgb(var(--color-border));
+}
+
+.new-advert-page-footer {
+  align-items: center;
+  display: flex;
+}
+
+.new-advert-page-characters {
+  color: rgb(var(--color-twitter));
+}
+
+.new-advert-page-submit {
+  margin-left: auto;
+}

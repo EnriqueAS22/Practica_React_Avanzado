@@ -1,0 +1,39 @@
+.advert-item {
+  cursor: pointer;
+  display: flex;
+  gap: 10px;
+  padding: 10px 15px 10px 15px;
+  transition: background-color 0.2s;
+  border-style: solid;
+  border-color: rgb(var(--color-border));
+  border-bottom-width: 1px;
+}
+
+.advert-item:hover {
+  background-color: rgba(0, 0, 0, 0.03);
+}
+
+.advert-item-header {
+  color: rgb(var(--color-secondary-text));
+  margin-bottom: 2px;
+}
+
+.advert-item-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  max-width: 425px;
+}
+
+.advert-item-name {
+  color: rgb(20, 23, 26);
+  font-weight: bold;
+}
+
+.advert-item-username {
+  margin-left: 5px;
+}
+
+.advert-item-separator {
+  padding: 0 5px;
+}
