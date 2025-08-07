@@ -7,8 +7,10 @@ import { setAuthorizationHeader } from "./api/client.ts";
 import AuthProvider from "./pages/auth/auth-provider.tsx";
 import { BrowserRouter } from "react-router";
 
+/**
+ * STORE
+ */
 import configureStore from "./store/index.ts";
-
 const store = configureStore();
 console.log({ store });
 console.log(store.getState());
