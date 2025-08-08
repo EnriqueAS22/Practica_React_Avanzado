@@ -5,9 +5,10 @@ import { useState } from "react";
 import ConfirmModal from "./confirm-modal";
 import { authLogout } from "../../store/actions";
 import { useAppDispatch, useAppSelector } from "../../store";
+import { getIsLogged } from "../../store/selectors";
 
 export default function AuthButton() {
-  const isLogged = useAppSelector((state) => state.auth);
+  const isLogged = useAppSelector(getIsLogged);
   const dispatch = useAppDispatch();
   const [showConfirmLogout, setShowConfirmLogout] = useState(false);
 
