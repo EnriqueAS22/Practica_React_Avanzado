@@ -1,7 +1,16 @@
 import type { Advert } from "../pages/advert/types";
 
-type AuthLogin = {
-  type: "auth/login";
+type AuthLoginPending = {
+  type: "auth/login/pending";
+};
+
+type AuthLoginFulfilled = {
+  type: "auth/login/fulfilled";
+};
+
+type AuthLoginRejected = {
+  type: "auth/login/rejected";
+  payload: Error;
 };
 
 type AuthLogout = {
@@ -18,8 +27,25 @@ type AdvertsCreated = {
   payload: Advert;
 };
 
-export const authLogin = (): AuthLogin => ({
-  type: "auth/login",
+type UiResetError = {
+  type: "ui/reset-error";
+};
+
+/**
+ * Action Creator
+ */
+
+export const authLoginPending = (): AuthLoginPending => ({
+  type: "auth/login/pending",
+});
+
+export const authLoginFulfilled = (): AuthLoginFulfilled => ({
+  type: "auth/login/fulfilled",
+});
+
+export const authLoginRejected = (error: Error): AuthLoginRejected => ({
+  type: "auth/login/rejected",
+  payload: error,
 });
 
 export const authLogout = (): AuthLogout => ({
@@ -36,4 +62,15 @@ export const advertsCreated = (advert: Advert): AdvertsCreated => ({
   payload: advert,
 });
 
-export type Actions = AuthLogin | AuthLogout | AdvertsLoaded | AdvertsCreated;
+export const uiResetError = (): UiResetError => ({
+  type: "ui/reset-error",
+});
+
+export type Actions =
+  | AuthLoginPending
+  | AuthLoginFulfilled
+  | AuthLoginRejected
+  | AuthLogout
+  | AdvertsLoaded
+  | UiResetError
+  | AdvertsCreated;
