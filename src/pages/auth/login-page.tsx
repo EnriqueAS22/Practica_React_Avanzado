@@ -4,14 +4,13 @@ import { login } from "./service";
 import Button from "../../components/ui/button";
 import { useLocation, useNavigate } from "react-router";
 import { AxiosError } from "axios";
-import { authLogin } from "../../store/actions";
-import { useAppDispatch } from "../../store";
+import { useLoginAction } from "../../store/hooks";
 
 function LoginPage() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const dispatch = useAppDispatch();
+  const loginAction = useLoginAction();
   const [credentials, setCredentials] = useState({
     email: "",
     password: "",
@@ -37,7 +36,7 @@ function LoginPage() {
     try {
       setIsFetching(true);
       await login(credentials);
-      dispatch(authLogin());
+      loginAction();
       const to = location.state?.from ?? "/";
       navigate(to, { replace: true });
     } catch (error) {

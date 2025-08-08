@@ -3,18 +3,17 @@ import Button from "./button";
 import { Link } from "react-router";
 import { useState } from "react";
 import ConfirmModal from "./confirm-modal";
-import { authLogout } from "../../store/actions";
-import { useAppDispatch, useAppSelector } from "../../store";
-import { getIsLogged } from "../../store/selectors";
+import { useAuth } from "../../store/hooks";
+import { useLogoutAction } from "../../store/hooks";
 
 export default function AuthButton() {
-  const isLogged = useAppSelector(getIsLogged);
-  const dispatch = useAppDispatch();
+  const isLogged = useAuth();
+  const logoutAction = useLogoutAction();
   const [showConfirmLogout, setShowConfirmLogout] = useState(false);
 
   const handleLogout = async () => {
     await logout();
-    dispatch(authLogout());
+    logoutAction();
   };
 
   return (
