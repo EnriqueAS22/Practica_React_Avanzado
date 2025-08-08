@@ -1,11 +1,14 @@
 import "./adverts-page.css";
 import { getLatestAdverts, getTags } from "./service";
 import { useEffect, useState } from "react";
-import type { Advert, Tag } from "./types";
+import type { Tag } from "./types";
 import AdvertItem from "../../components/ui/advert-item";
 import Page from "../../components/layout/page";
 import { Link, useNavigate } from "react-router";
 import Button from "../../components/ui/button";
+import { useAppDispatch, useAppSelector } from "../../store";
+import { advertsLoaded } from "../../store/actions";
+import { getAdverts } from "../../store/selectors";
 
 const EmptyList = () => {
   const navigate = useNavigate();
@@ -25,7 +28,8 @@ const EmptyList = () => {
 };
 
 function AdvertsPage() {
-  const [adverts, setAdverts] = useState<Advert[]>([]);
+  const adverts = useAppSelector(getAdverts);
+  const dispatch = useAppDispatch();
   const [tags, setTags] = useState<Tag[]>([]);
 
   const [filters, setFilters] = useState({
@@ -36,9 +40,9 @@ function AdvertsPage() {
   });
 
   useEffect(() => {
-    getLatestAdverts().then(setAdverts);
+    getLatestAdverts().then((adverts) => dispatch(advertsLoaded(adverts)));
     getTags().then(setTags);
-  }, []);
+  }, [dispatch]);
 
   const tagsInclude = (tags: Tag[], tag: string) =>
     tags.some((t) => t.toString() === tag);

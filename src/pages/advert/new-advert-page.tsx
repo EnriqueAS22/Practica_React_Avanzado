@@ -5,9 +5,13 @@ import Button from "../../components/ui/button";
 import { useNavigate } from "react-router";
 import { AxiosError } from "axios";
 import { useState } from "react";
+import { useAppDispatch } from "../../store";
+import { advertsCreated } from "../../store/actions";
 
 export default function NewAdvertPage() {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+
   const [formData, setFormData] = useState({
     name: "",
     price: "",
@@ -50,7 +54,7 @@ export default function NewAdvertPage() {
       }
 
       const createdAdvert = await createAdvert(data);
-      console.log(createdAdvert);
+      dispatch(advertsCreated(createdAdvert));
       navigate(`/adverts/${createdAdvert.id}`);
     } catch (error) {
       if (error instanceof AxiosError) {

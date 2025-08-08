@@ -2,18 +2,21 @@ import "./adverts-page.css";
 import { useNavigate, useParams } from "react-router";
 import Page from "../../components/layout/page";
 import { useEffect, useState } from "react";
-import type { Advert } from "./types";
-import { deleteAdvert, getAdvert } from "./service";
+import { deleteAdvert, getAdvert as getAdvertService } from "./service";
 import { AxiosError } from "axios";
 import Button from "../../components/ui/button";
 import ConfirmModal from "../../components/ui/confirm-modal";
+import { useAppSelector } from "../../store";
+import { getAdvert } from "../../store/selectors";
 
 function AdvertPage() {
   const params = useParams();
-  const [advert, setAdvert] = useState<Advert | null>(null);
+  const advert = useAppSelector(getAdvert(params.advertId));
+
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
   const navigate = useNavigate();
 
+  /*
   useEffect(() => {
     if (!params.advertId) {
       return;
@@ -28,6 +31,7 @@ function AdvertPage() {
         }
       });
   }, [params.advertId, navigate]);
+  */
 
   const handleDelete = async () => {
     if (!advert) return;
