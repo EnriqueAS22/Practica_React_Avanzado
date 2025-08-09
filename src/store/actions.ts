@@ -1,4 +1,7 @@
+import type { AppThunk } from ".";
 import type { Advert } from "../pages/advert/types";
+import { login } from "../pages/auth/service";
+import type { Credentials } from "../pages/auth/types";
 
 type AuthLoginPending = {
   type: "auth/login/pending";
@@ -47,6 +50,24 @@ export const authLoginRejected = (error: Error): AuthLoginRejected => ({
   type: "auth/login/rejected",
   payload: error,
 });
+
+/**
+ * Action creator thunk
+ */
+export function authLogin(credentials: Credentials): AppThunk<Promise<void>> {
+  return async function (dispatch) {
+    dispatch(authLoginPending());
+    try {
+      await login(credentials);
+      dispatch(authLoginFulfilled());
+    } catch (error) {
+      if (error instanceof Error) {
+        dispatch(authLoginRejected(error));
+      }
+      throw error;
+    }
+  };
+}
 
 export const authLogout = (): AuthLogout => ({
   type: "auth/logout",

@@ -1,35 +1,16 @@
 import { useAppDispatch, useAppSelector } from ".";
-import {
-  authLoginFulfilled,
-  authLoginPending,
-  authLoginRejected,
-  authLogout,
-  uiResetError,
-} from "./actions";
+import type { Credentials } from "../pages/auth/types";
+import { authLogin, authLogout, uiResetError } from "./actions";
 import { getIsLogged } from "./selectors";
 
 export function useAuth() {
   return useAppSelector(getIsLogged);
 }
 
-export function useLoginActionPending() {
+export function useLoginAction() {
   const dispatch = useAppDispatch();
-  return function () {
-    return dispatch(authLoginPending());
-  };
-}
-
-export function useLoginActionFulfilled() {
-  const dispatch = useAppDispatch();
-  return function () {
-    return dispatch(authLoginFulfilled());
-  };
-}
-
-export function useLoginActionRejected() {
-  const dispatch = useAppDispatch();
-  return function (error: Error) {
-    return dispatch(authLoginRejected(error));
+  return function (credentials: Credentials) {
+    return dispatch(authLogin(credentials));
   };
 }
 

@@ -1,26 +1,16 @@
 import "./login-page.css";
 import { useState } from "react";
-import { login } from "./service";
 import Button from "../../components/ui/button";
 import { useLocation, useNavigate } from "react-router";
-import { AxiosError } from "axios";
-import {
-  useLoginActionFulfilled,
-  useLoginActionPending,
-  useLoginActionRejected,
-  useUiResetError,
-} from "../../store/hooks";
+import { useLoginAction, useUiResetError } from "../../store/hooks";
 import { useAppSelector } from "../../store";
 import { getUi } from "../../store/selectors";
 
 function LoginPage() {
   const location = useLocation();
   const navigate = useNavigate();
-
-  const loginActionPending = useLoginActionPending();
-  const loginActionFulfilled = useLoginActionFulfilled();
-  const loginActionrejected = useLoginActionRejected();
-  const useUiResetErrorAction = useUiResetError();
+  const loginAction = useLoginAction();
+  const uiResetErrorAction = useUiResetError();
 
   const [credentials, setCredentials] = useState({
     email: "",
@@ -44,17 +34,11 @@ function LoginPage() {
     event.preventDefault();
 
     try {
-      loginActionPending();
-      await login(credentials);
-      loginActionFulfilled();
+      await loginAction(credentials);
       const to = location.state?.from ?? "/";
       navigate(to, { replace: true });
     } catch (error) {
-      if (error instanceof AxiosError) {
-        loginActionrejected(
-          new Error(error.response?.data?.message ?? error.message ?? ""),
-        );
-      }
+      console.log(error);
     }
   }
 
@@ -135,7 +119,7 @@ function LoginPage() {
           className="login-page-error"
           role="alert"
           onClick={() => {
-            useUiResetErrorAction();
+            uiResetErrorAction();
           }}
         >
           {error.message}
