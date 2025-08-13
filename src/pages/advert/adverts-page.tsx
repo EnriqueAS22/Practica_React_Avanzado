@@ -1,5 +1,5 @@
 import "./adverts-page.css";
-import { getLatestAdverts, getTags } from "./service";
+import { getTags } from "./service";
 import { useEffect, useState } from "react";
 import type { Tag } from "./types";
 import AdvertItem from "../../components/ui/advert-item";
@@ -40,7 +40,7 @@ function AdvertsPage() {
   });
 
   useEffect(() => {
-    getLatestAdverts().then((adverts) => dispatch(advertsLoaded(adverts)));
+    dispatch(advertsLoaded());
     getTags().then(setTags);
   }, [dispatch]);
 
@@ -77,8 +77,6 @@ function AdvertsPage() {
   return (
     <Page title="">
       <div className="mx-auto mt-16 max-w-2xl px-4">
-        {/* Filtros */}
-
         <div className="dark:bg-dark-background space-y-6 rounded bg-white p-6 shadow-sm">
           <div className="mb-4 flex">
             <div className="h-12 w-1/3 bg-white">
