@@ -2,36 +2,34 @@ import "./adverts-page.css";
 import { useNavigate, useParams } from "react-router";
 import Page from "../../components/layout/page";
 import { useEffect, useState } from "react";
-import { deleteAdvert, getAdvert as getAdvertService } from "./service";
+import { deleteAdvert } from "./service";
 import { AxiosError } from "axios";
 import Button from "../../components/ui/button";
 import ConfirmModal from "../../components/ui/confirm-modal";
-import { useAppSelector } from "../../store";
+import { useAppDispatch, useAppSelector } from "../../store";
 import { getAdvert } from "../../store/selectors";
+import { advertsDetail } from "../../store/actions";
 
 function AdvertPage() {
   const params = useParams();
+  const navigate = useNavigate();
   const advert = useAppSelector(getAdvert(params.advertId));
+  const dispatch = useAppDispatch();
 
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
-  const navigate = useNavigate();
 
-  /*
   useEffect(() => {
     if (!params.advertId) {
       return;
     }
-    getAdvert(params.advertId)
-      .then((advert) => setAdvert(advert))
-      .catch((error) => {
-        if (error instanceof AxiosError) {
-          if (error.status === 404) {
-            navigate("/404", { replace: true });
-          }
+    dispatch(advertsDetail(params.advertId)).catch((error) => {
+      if (error instanceof AxiosError) {
+        if (error.status === 404) {
+          navigate("/404", { replace: true });
         }
-      });
-  }, [params.advertId, navigate]);
-  */
+      }
+    });
+  });
 
   const handleDelete = async () => {
     if (!advert) return;

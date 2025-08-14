@@ -1,12 +1,13 @@
 import type { AppThunk } from ".";
 import {
-  getAdvert,
+  getAdvert as getAdvertService,
   getLatestAdverts,
   createAdvert,
 } from "../pages/advert/service";
 import type { Advert } from "../pages/advert/types";
 import { login } from "../pages/auth/service";
 import type { Credentials } from "../pages/auth/types";
+import { getAdvert } from "./selectors";
 
 /**
  * Login
@@ -101,7 +102,7 @@ export const advertsLoadedRejected = (error: Error): AdvertsLoadedRejected => ({
 export function advertsLoaded(): AppThunk<Promise<void>> {
   return async function (dispatch, getState) {
     const state = getState();
-    if (state.adverts) {
+    if (state.adverts.loaded) {
       return;
     }
     try {
@@ -120,6 +121,33 @@ export function advertsLoaded(): AppThunk<Promise<void>> {
 /**
  * Advert Detail
  */
+
+type AdvertDetailFulfilled = {
+  type: "adverts/detail/fulfilled";
+  payload: Advert;
+};
+
+export const advertDetailFulfilled = (
+  advert: Advert,
+): AdvertDetailFulfilled => ({
+  type: "adverts/detail/fulfilled",
+  payload: advert,
+});
+
+export function advertsDetail(advertId: string): AppThunk<Promise<void>> {
+  return async function (dispatch, getState) {
+    const state = getState();
+    if (getAdvert(advertId)(state)) {
+      return;
+    }
+    try {
+      const advert = await getAdvertService(advertId);
+      dispatch(advertDetailFulfilled(advert));
+    } catch (error) {
+      throw error;
+    }
+  };
+}
 
 /**
  * New Advert
@@ -162,7 +190,7 @@ export function advertsCreate(formData: FormData): AppThunk<Promise<Advert>> {
     dispatch(advertsCreatedPending());
     try {
       const createdAdvert = await createAdvert(formData);
-      const advert = await getAdvert(createdAdvert.id);
+      const advert = await getAdvertService(createdAdvert.id);
       dispatch(advertsCreatedFulfilled(advert));
       return advert;
     } catch (error) {
@@ -197,4 +225,5 @@ export type Actions =
   | UiResetError
   | AdvertsCreatedPending
   | AdvertsCreatedFulfilled
-  | AdvertsCreatedRejected;
+  | AdvertsCreatedRejected
+  | AdvertDetailFulfilled;
