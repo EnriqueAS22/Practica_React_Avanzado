@@ -1,11 +1,5 @@
 import type { AppThunk } from ".";
-import {
-  getAdvert as getAdvertService,
-  getLatestAdverts,
-  createAdvert,
-} from "../pages/advert/service";
 import type { Advert } from "../pages/advert/types";
-import { login } from "../pages/auth/service";
 import type { Credentials } from "../pages/auth/types";
 import { getAdvert } from "./selectors";
 
@@ -40,10 +34,10 @@ export const authLoginRejected = (error: Error): AuthLoginRejected => ({
 });
 
 export function authLogin(credentials: Credentials): AppThunk<Promise<void>> {
-  return async function (dispatch) {
+  return async function (dispatch, _getState, { api }) {
     dispatch(authLoginPending());
     try {
-      await login(credentials);
+      await api.auth.login(credentials);
       dispatch(authLoginFulfilled());
     } catch (error) {
       if (error instanceof Error) {
@@ -100,14 +94,14 @@ export const advertsLoadedRejected = (error: Error): AdvertsLoadedRejected => ({
 });
 
 export function advertsLoaded(): AppThunk<Promise<void>> {
-  return async function (dispatch, getState) {
+  return async function (dispatch, getState, { api }) {
     const state = getState();
     if (state.adverts.loaded) {
       return;
     }
     try {
       dispatch(advertsLoadedPending());
-      const adverts = await getLatestAdverts();
+      const adverts = await api.adverts.getLatestAdverts();
       dispatch(advertsLoadedFulfilled(adverts));
     } catch (error) {
       if (error instanceof Error) {
@@ -135,13 +129,13 @@ export const advertDetailFulfilled = (
 });
 
 export function advertsDetail(advertId: string): AppThunk<Promise<void>> {
-  return async function (dispatch, getState) {
+  return async function (dispatch, getState, { api }) {
     const state = getState();
     if (getAdvert(advertId)(state)) {
       return;
     }
     try {
-      const advert = await getAdvertService(advertId);
+      const advert = await api.adverts.getAdvert(advertId);
       dispatch(advertDetailFulfilled(advert));
     } catch (error) {
       throw error;
@@ -186,11 +180,11 @@ export const advertsCreatedRejected = (
 });
 
 export function advertsCreate(formData: FormData): AppThunk<Promise<Advert>> {
-  return async function (dispatch) {
+  return async function (dispatch, _getState, { api }) {
     dispatch(advertsCreatedPending());
     try {
-      const createdAdvert = await createAdvert(formData);
-      const advert = await getAdvertService(createdAdvert.id);
+      const createdAdvert = await api.adverts.createAdvert(formData);
+      const advert = await api.adverts.getAdvert(createdAdvert.id);
       dispatch(advertsCreatedFulfilled(advert));
       return advert;
     } catch (error) {
