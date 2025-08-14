@@ -1,14 +1,11 @@
 import "./login-page.css";
 import { useState } from "react";
 import Button from "../../components/ui/button";
-import { useLocation, useNavigate } from "react-router";
 import { useLoginAction, useUiResetError } from "../../store/hooks";
 import { useAppSelector } from "../../store";
 import { getUi } from "../../store/selectors";
 
 function LoginPage() {
-  const location = useLocation();
-  const navigate = useNavigate();
   const loginAction = useLoginAction();
   const uiResetErrorAction = useUiResetError();
 
@@ -35,8 +32,6 @@ function LoginPage() {
 
     try {
       await loginAction(credentials);
-      const to = location.state?.from ?? "/";
-      navigate(to, { replace: true });
     } catch (error) {
       console.log(error);
     }

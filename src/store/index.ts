@@ -6,13 +6,23 @@ import * as thunk from "redux-thunk";
 import type { Actions } from "./actions";
 import * as adverts from "../pages/advert/service";
 import * as auth from "../pages/auth/service";
+import type { createBrowserRouter } from "react-router";
 
 const rootReducer = combineReducers(reducers);
 
-type ExtraArgument = { api: { auth: typeof auth; adverts: typeof adverts } };
+type Router = ReturnType<typeof createBrowserRouter>;
+
+type ExtraArgument = {
+  api: {
+    auth: typeof auth;
+    adverts: typeof adverts;
+  };
+  router: Router;
+};
 
 export default function configureStore(
   preloadedState: Partial<reducers.State>,
+  router: Router,
 ) {
   const store = createStore(
     rootReducer,
@@ -25,6 +35,7 @@ export default function configureStore(
       applyMiddleware(
         thunk.withExtraArgument<reducers.State, Actions, ExtraArgument>({
           api: { adverts, auth },
+          router,
         }),
       ),
     ),

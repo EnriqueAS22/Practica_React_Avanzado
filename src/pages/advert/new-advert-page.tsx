@@ -52,8 +52,7 @@ export default function NewAdvertPage() {
         data.append("photo", formData.photo);
       }
 
-      const createdAdvert = await dispatch(advertsCreate(data));
-      navigate(`/adverts/${createdAdvert.id}`);
+      await dispatch(advertsCreate(data));
     } catch (error) {
       if (error instanceof AxiosError) {
         if (error.status === 401) {

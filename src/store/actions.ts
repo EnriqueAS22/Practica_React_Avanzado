@@ -34,11 +34,14 @@ export const authLoginRejected = (error: Error): AuthLoginRejected => ({
 });
 
 export function authLogin(credentials: Credentials): AppThunk<Promise<void>> {
-  return async function (dispatch, _getState, { api }) {
+  return async function (dispatch, _getState, { api, router }) {
     dispatch(authLoginPending());
     try {
       await api.auth.login(credentials);
       dispatch(authLoginFulfilled());
+
+      const to = router.state.location.state?.from ?? "/";
+      router.navigate(to, { replace: true });
     } catch (error) {
       if (error instanceof Error) {
         dispatch(authLoginRejected(error));
@@ -180,12 +183,13 @@ export const advertsCreatedRejected = (
 });
 
 export function advertsCreate(formData: FormData): AppThunk<Promise<Advert>> {
-  return async function (dispatch, _getState, { api }) {
+  return async function (dispatch, _getState, { api, router }) {
     dispatch(advertsCreatedPending());
     try {
       const createdAdvert = await api.adverts.createAdvert(formData);
       const advert = await api.adverts.getAdvert(createdAdvert.id);
       dispatch(advertsCreatedFulfilled(advert));
+      router.navigate(`/adverts/${createdAdvert.id}`);
       return advert;
     } catch (error) {
       if (error instanceof Error) {
