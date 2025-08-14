@@ -59,7 +59,7 @@ export function adverts(
   switch (action.type) {
     case "adverts/loaded/fulfilled":
       return action.payload;
-    case "adverts/created":
+    case "adverts/created/fulfilled":
       return [...(state ?? []), action.payload];
     default:
       return state;

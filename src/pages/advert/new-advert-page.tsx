@@ -1,12 +1,11 @@
 import "./new-advert-page.css";
-import { createAdvert } from "./service";
 import Page from "../../components/layout/page";
 import Button from "../../components/ui/button";
 import { useNavigate } from "react-router";
 import { AxiosError } from "axios";
 import { useState } from "react";
 import { useAppDispatch } from "../../store";
-import { advertsCreated } from "../../store/actions";
+import { advertsCreate } from "../../store/actions";
 
 export default function NewAdvertPage() {
   const navigate = useNavigate();
@@ -53,8 +52,7 @@ export default function NewAdvertPage() {
         data.append("photo", formData.photo);
       }
 
-      const createdAdvert = await createAdvert(data);
-      dispatch(advertsCreated(createdAdvert));
+      const createdAdvert = await dispatch(advertsCreate(data));
       navigate(`/adverts/${createdAdvert.id}`);
     } catch (error) {
       if (error instanceof AxiosError) {

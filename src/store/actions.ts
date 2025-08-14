@@ -1,5 +1,9 @@
 import type { AppThunk } from ".";
-import { getLatestAdverts } from "../pages/advert/service";
+import {
+  getAdvert,
+  getLatestAdverts,
+  createAdvert,
+} from "../pages/advert/service";
 import type { Advert } from "../pages/advert/types";
 import { login } from "../pages/auth/service";
 import type { Credentials } from "../pages/auth/types";
@@ -121,15 +125,54 @@ export function advertsLoaded(): AppThunk<Promise<void>> {
  * New Advert
  */
 
-export const advertsCreated = (advert: Advert): AdvertsCreated => ({
-  type: "adverts/created",
+type AdvertsCreatedPending = {
+  type: "adverts/created/pending";
+};
+
+type AdvertsCreatedFulfilled = {
+  type: "adverts/created/fulfilled";
+  payload: Advert;
+};
+
+type AdvertsCreatedRejected = {
+  type: "adverts/created/rejected";
+  payload: Error;
+};
+
+export const advertsCreatedPending = (): AdvertsCreatedPending => ({
+  type: "adverts/created/pending",
+});
+
+export const advertsCreatedFulfilled = (
+  advert: Advert,
+): AdvertsCreatedFulfilled => ({
+  type: "adverts/created/fulfilled",
   payload: advert,
 });
 
-type AdvertsCreated = {
-  type: "adverts/created";
-  payload: Advert;
-};
+export const advertsCreatedRejected = (
+  error: Error,
+): AdvertsCreatedRejected => ({
+  type: "adverts/created/rejected",
+  payload: error,
+});
+
+export function advertsCreate(formData: FormData): AppThunk<Promise<Advert>> {
+  return async function (dispatch) {
+    dispatch(advertsCreatedPending());
+    try {
+      const createdAdvert = await createAdvert(formData);
+      const advert = await getAdvert(createdAdvert.id);
+      dispatch(advertsCreatedFulfilled(advert));
+      return advert;
+    } catch (error) {
+      if (error instanceof Error) {
+        dispatch(advertsCreatedRejected(error));
+      }
+      throw error;
+    }
+  };
+}
 
 /**
  * Error
@@ -152,4 +195,6 @@ export type Actions =
   | AdvertsLoadedFulfilled
   | AdvertsLoadedRejected
   | UiResetError
-  | AdvertsCreated;
+  | AdvertsCreatedPending
+  | AdvertsCreatedFulfilled
+  | AdvertsCreatedRejected;
