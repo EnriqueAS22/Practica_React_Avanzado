@@ -1,4 +1,3 @@
-import { logout } from "../../pages/auth/service";
 import Button from "./button";
 import { Link } from "react-router";
 import { useState } from "react";
@@ -10,11 +9,6 @@ export default function AuthButton() {
   const isLogged = useAuth();
   const logoutAction = useLogoutAction();
   const [showConfirmLogout, setShowConfirmLogout] = useState(false);
-
-  const handleLogout = async () => {
-    await logout();
-    logoutAction();
-  };
 
   return (
     <>
@@ -33,7 +27,7 @@ export default function AuthButton() {
           message="Are you sure do you want to logout?"
           onConfirm={() => {
             setShowConfirmLogout(false);
-            handleLogout();
+            logoutAction();
           }}
           onCancel={() => setShowConfirmLogout(false)}
         />
