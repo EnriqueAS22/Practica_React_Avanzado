@@ -22,14 +22,8 @@ function AdvertPage() {
     if (!params.advertId) {
       return;
     }
-    dispatch(advertsDetail(params.advertId)).catch((error) => {
-      if (error instanceof AxiosError) {
-        if (error.status === 404) {
-          navigate("/404", { replace: true });
-        }
-      }
-    });
-  });
+    dispatch(advertsDetail(params.advertId));
+  }, [params.advertId, dispatch]);
 
   const handleDelete = async () => {
     if (!advert) return;

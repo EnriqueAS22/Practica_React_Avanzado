@@ -29,12 +29,7 @@ function LoginPage() {
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-
-    try {
-      await loginAction(credentials);
-    } catch (error) {
-      console.log(error);
-    }
+    await loginAction(credentials);
   }
 
   return (

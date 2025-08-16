@@ -127,11 +127,21 @@ type AdvertDetailFulfilled = {
   payload: Advert;
 };
 
+type AdvertDetailRejected = {
+  type: "adverts/detail/rejected";
+  payload: Error;
+};
+
 export const advertDetailFulfilled = (
   advert: Advert,
 ): AdvertDetailFulfilled => ({
   type: "adverts/detail/fulfilled",
   payload: advert,
+});
+
+export const advertDetailRejected = (error: Error): AdvertDetailRejected => ({
+  type: "adverts/detail/rejected",
+  payload: error,
 });
 
 export function advertsDetail(advertId: string): AppThunk<Promise<void>> {
@@ -144,6 +154,9 @@ export function advertsDetail(advertId: string): AppThunk<Promise<void>> {
       const advert = await api.adverts.getAdvert(advertId);
       dispatch(advertDetailFulfilled(advert));
     } catch (error) {
+      if (error instanceof Error) {
+        dispatch(advertDetailRejected(error));
+      }
       throw error;
     }
   };
@@ -227,4 +240,5 @@ export type Actions =
   | AdvertsCreatedPending
   | AdvertsCreatedFulfilled
   | AdvertsCreatedRejected
-  | AdvertDetailFulfilled;
+  | AdvertDetailFulfilled
+  | AdvertDetailRejected;

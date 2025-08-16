@@ -84,6 +84,12 @@ export function ui(state = defaultState.ui, action: Actions): State["ui"] {
   if (action.type === "auth/login/rejected") {
     return { pending: false, error: action.payload };
   }
+  if (action.type === "adverts/created/rejected") {
+    return { pending: false, error: action.payload };
+  }
+  if (action.type === "adverts/detail/rejected") {
+    return { pending: false, error: action.payload };
+  }
   if (action.type === "ui/reset-error") {
     return { ...state, error: null };
   }

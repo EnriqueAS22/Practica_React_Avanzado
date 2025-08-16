@@ -1,14 +1,11 @@
 import "./new-advert-page.css";
 import Page from "../../components/layout/page";
 import Button from "../../components/ui/button";
-import { useNavigate } from "react-router";
-import { AxiosError } from "axios";
 import { useState } from "react";
 import { useAppDispatch } from "../../store";
 import { advertsCreate } from "../../store/actions";
 
 export default function NewAdvertPage() {
-  const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
   const [formData, setFormData] = useState({
@@ -42,26 +39,16 @@ export default function NewAdvertPage() {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    try {
-      const data = new FormData();
-      data.append("name", formData.name);
-      data.append("sale", formData.sale.toString());
-      data.append("price", formData.price.toString());
-      formData.tags.forEach((tag) => data.append("tags", tag));
-      if (formData.photo) {
-        data.append("photo", formData.photo);
-      }
-
-      await dispatch(advertsCreate(data));
-    } catch (error) {
-      if (error instanceof AxiosError) {
-        if (error.status === 401) {
-          navigate("/login", { replace: true });
-        } else {
-          console.error("No se pudo crear...", error);
-        }
-      }
+    const data = new FormData();
+    data.append("name", formData.name);
+    data.append("sale", formData.sale.toString());
+    data.append("price", formData.price.toString());
+    formData.tags.forEach((tag) => data.append("tags", tag));
+    if (formData.photo) {
+      data.append("photo", formData.photo);
     }
+
+    await dispatch(advertsCreate(data));
   };
 
   return (
