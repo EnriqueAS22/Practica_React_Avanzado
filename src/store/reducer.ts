@@ -69,6 +69,11 @@ export function adverts(
       return { loaded: false, data: [action.payload] };
     case "adverts/created/fulfilled":
       return { ...state, data: [action.payload, ...(state.data ?? [])] };
+    case "adverts/delete":
+      return {
+        ...state,
+        data: state.data.filter((advert) => advert.id !== action.payload),
+      };
     default:
       return state;
   }

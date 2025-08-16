@@ -122,6 +122,10 @@ export function advertsLoaded(): AppThunk<Promise<void>> {
  * Advert Detail
  */
 
+type AdvertDetailPending = {
+  type: "adverts/detail/pending";
+};
+
 type AdvertDetailFulfilled = {
   type: "adverts/detail/fulfilled";
   payload: Advert;
@@ -131,6 +135,10 @@ type AdvertDetailRejected = {
   type: "adverts/detail/rejected";
   payload: Error;
 };
+
+export const advertDetailPending = (): AdvertDetailPending => ({
+  type: "adverts/detail/pending",
+});
 
 export const advertDetailFulfilled = (
   advert: Advert,
@@ -151,6 +159,7 @@ export function advertsDetail(advertId: string): AppThunk<Promise<void>> {
       return;
     }
     try {
+      dispatch(advertDetailPending());
       const advert = await api.adverts.getAdvert(advertId);
       dispatch(advertDetailFulfilled(advert));
     } catch (error) {
@@ -217,6 +226,22 @@ export function advertsCreate(formData: FormData): AppThunk<Promise<Advert>> {
 }
 
 /**
+ * Delete
+ */
+type AdvertsDelete = {
+  type: "adverts/delete";
+  payload: string;
+};
+
+export function advertsDelete(advertId: string): AppThunk<Promise<void>> {
+  return async function (dispatch, _getState, { api, router }) {
+    await api.adverts.deleteAdvert(advertId);
+    dispatch({ type: "adverts/delete", payload: advertId });
+    router.navigate("/", { replace: true });
+  };
+}
+
+/**
  * Error
  */
 
@@ -240,5 +265,7 @@ export type Actions =
   | AdvertsCreatedPending
   | AdvertsCreatedFulfilled
   | AdvertsCreatedRejected
+  | AdvertDetailPending
   | AdvertDetailFulfilled
-  | AdvertDetailRejected;
+  | AdvertDetailRejected
+  | AdvertsDelete;

@@ -1,18 +1,15 @@
 import "./adverts-page.css";
-import { useNavigate, useParams } from "react-router";
+import { useParams } from "react-router";
 import Page from "../../components/layout/page";
 import { useEffect, useState } from "react";
-import { deleteAdvert } from "./service";
-import { AxiosError } from "axios";
 import Button from "../../components/ui/button";
 import ConfirmModal from "../../components/ui/confirm-modal";
 import { useAppDispatch, useAppSelector } from "../../store";
 import { getAdvert } from "../../store/selectors";
-import { advertsDetail } from "../../store/actions";
+import { advertsDelete, advertsDetail } from "../../store/actions";
 
 function AdvertPage() {
   const params = useParams();
-  const navigate = useNavigate();
   const advert = useAppSelector(getAdvert(params.advertId));
   const dispatch = useAppDispatch();
 
@@ -26,19 +23,8 @@ function AdvertPage() {
   }, [params.advertId, dispatch]);
 
   const handleDelete = async () => {
-    if (!advert) return;
-
-    try {
-      await deleteAdvert(advert.id);
-      navigate("/adverts");
-    } catch (error) {
-      if (error instanceof AxiosError) {
-        if (error.status === 401) {
-          navigate("/login", { replace: true });
-        } else {
-          console.error("Ups! error...", error.message);
-        }
-      }
+    if (advert) {
+      dispatch(advertsDelete(advert.id));
     }
   };
 
