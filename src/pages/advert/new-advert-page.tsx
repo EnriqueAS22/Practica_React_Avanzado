@@ -4,9 +4,11 @@ import Button from "../../components/ui/button";
 import { useState } from "react";
 import { useAppDispatch } from "../../store";
 import { advertsCreate } from "../../store/actions";
+import { useTags } from "../../store/hooks";
 
 export default function NewAdvertPage() {
   const dispatch = useAppDispatch();
+  const tags = useTags();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -192,7 +194,7 @@ export default function NewAdvertPage() {
                 </legend>
                 <div className="mt-6 space-y-6">
                   <div className="flex items-center gap-2">
-                    {["lifestyle", "motor", "mobile", "work"].map((tag) => (
+                    {tags.map((tag) => (
                       <label key={tag} className="text-sm text-gray-700">
                         <input
                           type="checkbox"

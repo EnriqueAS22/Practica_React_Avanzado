@@ -11,6 +11,11 @@ export type State = {
     pending: boolean;
     error: Error | null;
   };
+  tags: {
+    loaded: boolean;
+    data: string[];
+    error: Error | null;
+  };
 };
 
 const defaultState: State = {
@@ -23,26 +28,12 @@ const defaultState: State = {
     pending: false,
     error: null,
   },
+  tags: {
+    loaded: false,
+    data: [],
+    error: null,
+  },
 };
-
-/*
-export function reducer(state = defaultState, action: Actions): State {
-  switch (action.type) {
-    case "auth/login":
-      return { ...state, auth: true };
-    case "auth/logout":
-      return { ...state, auth: false };
-    case "adverts/loaded":
-      return { ...state, adverts: action.payload };
-    case "adverts/created":
-      return { ...state, adverts: [...state.adverts, action.payload] };
-    default:
-      return state;
-  }
-
-  return state;
-}
-*/
 
 export function auth(
   state = defaultState.auth,
@@ -101,17 +92,18 @@ export function ui(state = defaultState.ui, action: Actions): State["ui"] {
   return state;
 }
 
-/*
-export function reducer(state = defaultState, action: Actions): State {
-  return {
-    auth: auth(state.auth, action),
-    adverts: adverts(state.adverts, action),
-  };
+export function tags(
+  state = defaultState.tags,
+  action: Actions,
+): State["tags"] {
+  switch (action.type) {
+    case "tags/pending":
+      return { ...state, loaded: false, error: null };
+    case "tags/fulfilled":
+      return { ...state, loaded: true, data: action.payload };
+    case "tags/rejected":
+      return { ...state, loaded: false, error: action.payload };
+    default:
+      return state;
+  }
 }
-
-
-export const reducer = combineReducers({
-  auth,
-  adverts,
-});
-*/

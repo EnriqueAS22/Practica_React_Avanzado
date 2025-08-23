@@ -253,6 +253,58 @@ export const uiResetError = (): UiResetError => ({
   type: "ui/reset-error",
 });
 
+/**
+ * Tags
+ */
+
+type TagsLoadedPending = {
+  type: "tags/pending";
+};
+
+type TagsLoadedFulfilled = {
+  type: "tags/fulfilled";
+  payload: string[];
+};
+
+type TagsLoadedRejected = {
+  type: "tags/rejected";
+  payload: Error;
+};
+
+export const tagsLoadedPending = (): TagsLoadedPending => ({
+  type: "tags/pending",
+});
+
+export const tagsLoadedFulfilled = (tags: string[]): TagsLoadedFulfilled => ({
+  type: "tags/fulfilled",
+  payload: tags,
+});
+
+export const tagsLoadedRejected = (error: Error): TagsLoadedRejected => ({
+  type: "tags/rejected",
+  payload: error,
+});
+
+export function tagsLoaded(): AppThunk<Promise<string[]>> {
+  return async function (dispatch, _getState, { api }) {
+    try {
+      dispatch(tagsLoadedPending());
+      const tags = await api.adverts.getTags();
+      dispatch(tagsLoadedFulfilled(tags));
+      return tags;
+    } catch (error) {
+      if (error instanceof Error) {
+        dispatch(tagsLoadedRejected(error));
+      }
+      throw error;
+    }
+  };
+}
+
+/**
+ * Actions
+ */
+
 export type Actions =
   | AuthLoginPending
   | AuthLoginFulfilled
@@ -268,4 +320,7 @@ export type Actions =
   | AdvertDetailPending
   | AdvertDetailFulfilled
   | AdvertDetailRejected
-  | AdvertsDelete;
+  | AdvertsDelete
+  | TagsLoadedPending
+  | TagsLoadedFulfilled
+  | TagsLoadedRejected;
