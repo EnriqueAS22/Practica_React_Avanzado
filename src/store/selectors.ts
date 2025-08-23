@@ -12,3 +12,5 @@ export const getUi = (state: RootState) => state.ui;
 export const getTags = (state: RootState) => state.tags.data;
 
 export const areTagsLoaded = (state: RootState) => state.tags.loaded;
+
+export const getFilters = (state: RootState) => state.filters;

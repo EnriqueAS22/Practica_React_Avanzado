@@ -1,14 +1,15 @@
 import "./adverts-page.css";
-import { getTags } from "./service";
 import { useEffect, useState } from "react";
-import type { Tag } from "./types";
+import { Link, useNavigate } from "react-router";
 import AdvertItem from "../../components/ui/advert-item";
 import Page from "../../components/layout/page";
-import { Link, useNavigate } from "react-router";
 import Button from "../../components/ui/button";
 import { useAppDispatch, useAppSelector } from "../../store";
-import { advertsLoaded } from "../../store/actions";
+import { advertsLoaded, tagsLoaded } from "../../store/actions";
 import { getAdverts } from "../../store/selectors";
+import type { Filters, Tag } from "./types";
+
+const ALL_TAGS: Tag[] = ["work", "mobile", "motor", "lifestyle"];
 
 const EmptyList = () => {
   const navigate = useNavigate();
@@ -28,24 +29,28 @@ const EmptyList = () => {
 };
 
 function AdvertsPage() {
-  const adverts = useAppSelector(getAdverts);
   const dispatch = useAppDispatch();
-  const [tags, setTags] = useState<Tag[]>([]);
-
-  const [filters, setFilters] = useState({
+  const adverts = useAppSelector(getAdverts);
+  const [filters, setFilters] = useState<Filters>({
     name: "",
     priceRange: [0, 25000],
     sale: "all",
-    selectedTags: [] as string[],
+    selectedTags: [],
   });
 
   useEffect(() => {
     dispatch(advertsLoaded());
-    getTags().then(setTags);
+    dispatch(tagsLoaded());
   }, [dispatch]);
 
-  const tagsInclude = (tags: Tag[], tag: string) =>
-    tags.some((t) => t.toString() === tag);
+  const handleTagToggle = (tag: Tag) => {
+    setFilters((prev) => ({
+      ...prev,
+      selectedTags: prev.selectedTags.includes(tag)
+        ? prev.selectedTags.filter((t) => t !== tag)
+        : [...prev.selectedTags, tag],
+    }));
+  };
 
   const filteredAdverts = adverts.filter((ad) => {
     const matchesName = filters.name
@@ -59,20 +64,11 @@ function AdvertsPage() {
       filters.sale === "all" ? true : ad.sale === (filters.sale === "true");
 
     const matchesTags = filters.selectedTags.every((tag) =>
-      tagsInclude(ad.tags, tag),
+      ad.tags.includes(tag),
     );
 
     return matchesName && matchesPrice && matchesSale && matchesTags;
   });
-
-  const handleTagToggle = (tag: string) => {
-    setFilters((prev) => ({
-      ...prev,
-      selectedTags: prev.selectedTags.includes(tag)
-        ? prev.selectedTags.filter((t) => t !== tag)
-        : [...prev.selectedTags, tag],
-    }));
-  };
 
   return (
     <Page title="">
@@ -98,7 +94,10 @@ function AdvertsPage() {
                 className="mb-2 block text-sm font-bold text-gray-700"
                 value={filters.sale}
                 onChange={(e) =>
-                  setFilters({ ...filters, sale: e.target.value })
+                  setFilters({
+                    ...filters,
+                    sale: e.target.value as Filters["sale"],
+                  })
                 }
               >
                 <option value="all">Sale and Buy</option>
@@ -115,7 +114,7 @@ function AdvertsPage() {
                   type="range"
                   min="0"
                   max="25000"
-                  step="50"
+                  step={50}
                   value={filters.priceRange[0]}
                   onChange={(e) =>
                     setFilters((prev) => ({
@@ -128,7 +127,7 @@ function AdvertsPage() {
                   type="range"
                   min="0"
                   max="25000"
-                  step="50"
+                  step={50}
                   value={filters.priceRange[1]}
                   onChange={(e) =>
                     setFilters((prev) => ({
@@ -146,7 +145,7 @@ function AdvertsPage() {
               Tags
             </legend>
             <div className="mb-4 flex flex-wrap gap-4">
-              {tags.map((tag) => (
+              {ALL_TAGS.map((tag) => (
                 <label
                   key={tag}
                   className="flex cursor-pointer items-center gap-2 text-sm"

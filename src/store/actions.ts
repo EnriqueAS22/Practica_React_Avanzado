@@ -1,5 +1,5 @@
 import type { AppThunk } from ".";
-import type { Advert } from "../pages/advert/types";
+import type { Advert, Filters } from "../pages/advert/types";
 import type { Credentials } from "../pages/auth/types";
 import { getAdvert } from "./selectors";
 
@@ -302,7 +302,29 @@ export function tagsLoaded(): AppThunk<Promise<string[]>> {
 }
 
 /**
- * Actions
+ * Filters
+ */
+
+export type FiltersApplied = {
+  type: "filters/applied";
+  payload: Filters;
+};
+
+export type FiltersReset = {
+  type: "filters/reset";
+};
+
+export const filtersApplied = (filters: Filters): FiltersApplied => ({
+  type: "filters/applied",
+  payload: filters,
+});
+
+export const filtersReset = (): FiltersReset => ({
+  type: "filters/reset",
+});
+
+/**
+ * Union Type Actions
  */
 
 export type Actions =
@@ -323,4 +345,6 @@ export type Actions =
   | AdvertsDelete
   | TagsLoadedPending
   | TagsLoadedFulfilled
-  | TagsLoadedRejected;
+  | TagsLoadedRejected
+  | FiltersApplied
+  | FiltersReset;

@@ -1,8 +1,15 @@
 import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from ".";
 import type { Credentials } from "../pages/auth/types";
-import { authLogin, authLogout, tagsLoaded, uiResetError } from "./actions";
-import { areTagsLoaded, getIsLogged, getTags } from "./selectors";
+import {
+  authLogin,
+  authLogout,
+  filtersApplied,
+  filtersReset,
+  tagsLoaded,
+  uiResetError,
+} from "./actions";
+import { areTagsLoaded, getFilters, getIsLogged, getTags } from "./selectors";
 
 export function useAuth() {
   return useAppSelector(getIsLogged);
@@ -41,4 +48,19 @@ export function useTags() {
   }, [loaded, dispatch]);
 
   return tags;
+}
+
+export function useFilters() {
+  const dispatch = useAppDispatch();
+  const filters = useAppSelector(getFilters);
+
+  const applyFilters = (newFilters: typeof filters) => {
+    dispatch(filtersApplied(newFilters));
+  };
+
+  const resetFilters = () => {
+    dispatch(filtersReset());
+  };
+
+  return { filters, applyFilters, resetFilters };
 }

@@ -1,4 +1,4 @@
-import type { Advert } from "../pages/advert/types";
+import type { Advert, Tag, Filters } from "../pages/advert/types";
 import type { Actions } from "./actions";
 
 export type State = {
@@ -16,6 +16,7 @@ export type State = {
     data: string[];
     error: Error | null;
   };
+  filters: Filters;
 };
 
 const defaultState: State = {
@@ -32,6 +33,12 @@ const defaultState: State = {
     loaded: false,
     data: [],
     error: null,
+  },
+  filters: {
+    name: "",
+    priceRange: [0, 25000],
+    sale: "all",
+    selectedTags: [] as Tag[],
   },
 };
 
@@ -103,6 +110,20 @@ export function tags(
       return { ...state, loaded: true, data: action.payload };
     case "tags/rejected":
       return { ...state, loaded: false, error: action.payload };
+    default:
+      return state;
+  }
+}
+
+export function filters(
+  state = defaultState.filters,
+  action: Actions,
+): Filters {
+  switch (action.type) {
+    case "filters/applied":
+      return { ...state, ...action.payload };
+    case "filters/reset":
+      return defaultState.filters;
     default:
       return state;
   }
