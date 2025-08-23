@@ -1,5 +1,5 @@
 import "./adverts-page.css";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Link, useNavigate } from "react-router";
 import AdvertItem from "../../components/ui/advert-item";
 import Page from "../../components/layout/page";
@@ -7,9 +7,9 @@ import Button from "../../components/ui/button";
 import { useAppDispatch, useAppSelector } from "../../store";
 import { advertsLoaded, tagsLoaded } from "../../store/actions";
 import { getAdverts } from "../../store/selectors";
-import type { Filters, Tag } from "./types";
-
-const ALL_TAGS: Tag[] = ["work", "mobile", "motor", "lifestyle"];
+import type { Tag } from "./types";
+import { useFilters } from "../../store/hooks";
+import { useTags } from "../../store/hooks";
 
 const EmptyList = () => {
   const navigate = useNavigate();
@@ -31,12 +31,9 @@ const EmptyList = () => {
 function AdvertsPage() {
   const dispatch = useAppDispatch();
   const adverts = useAppSelector(getAdverts);
-  const [filters, setFilters] = useState<Filters>({
-    name: "",
-    priceRange: [0, 25000],
-    sale: "all",
-    selectedTags: [],
-  });
+
+  const tags = useTags();
+  const { filters, applyFilters } = useFilters();
 
   useEffect(() => {
     dispatch(advertsLoaded());
@@ -44,12 +41,15 @@ function AdvertsPage() {
   }, [dispatch]);
 
   const handleTagToggle = (tag: Tag) => {
-    setFilters((prev) => ({
-      ...prev,
-      selectedTags: prev.selectedTags.includes(tag)
-        ? prev.selectedTags.filter((t) => t !== tag)
-        : [...prev.selectedTags, tag],
-    }));
+    const newSelectedTags = filters.selectedTags.includes(tag)
+      ? filters.selectedTags.filter((t) => t !== tag)
+      : [...filters.selectedTags, tag];
+
+    applyFilters({ ...filters, selectedTags: newSelectedTags });
+  };
+
+  const handleInputChange = (field: keyof typeof filters, value: any) => {
+    applyFilters({ ...filters, [field]: value });
   };
 
   const filteredAdverts = adverts.filter((ad) => {
@@ -84,9 +84,7 @@ function AdvertsPage() {
                 placeholder="..."
                 value={filters.name}
                 className="mb-2 block text-sm font-bold text-gray-700"
-                onChange={(e) =>
-                  setFilters({ ...filters, name: e.target.value })
-                }
+                onChange={(e) => handleInputChange("name", e.target.value)}
               />
             </div>
             <div className="h-12 w-1/3 bg-white">
@@ -94,10 +92,10 @@ function AdvertsPage() {
                 className="mb-2 block text-sm font-bold text-gray-700"
                 value={filters.sale}
                 onChange={(e) =>
-                  setFilters({
-                    ...filters,
-                    sale: e.target.value as Filters["sale"],
-                  })
+                  handleInputChange(
+                    "sale",
+                    e.target.value as typeof filters.sale,
+                  )
                 }
               >
                 <option value="all">Sale and Buy</option>
@@ -117,10 +115,10 @@ function AdvertsPage() {
                   step={50}
                   value={filters.priceRange[0]}
                   onChange={(e) =>
-                    setFilters((prev) => ({
-                      ...prev,
-                      priceRange: [Number(e.target.value), prev.priceRange[1]],
-                    }))
+                    handleInputChange("priceRange", [
+                      Number(e.target.value),
+                      filters.priceRange[1],
+                    ])
                   }
                 />
                 <input
@@ -130,10 +128,10 @@ function AdvertsPage() {
                   step={50}
                   value={filters.priceRange[1]}
                   onChange={(e) =>
-                    setFilters((prev) => ({
-                      ...prev,
-                      priceRange: [prev.priceRange[0], Number(e.target.value)],
-                    }))
+                    handleInputChange("priceRange", [
+                      filters.priceRange[0],
+                      Number(e.target.value),
+                    ])
                   }
                 />
               </div>
@@ -145,7 +143,7 @@ function AdvertsPage() {
               Tags
             </legend>
             <div className="mb-4 flex flex-wrap gap-4">
-              {ALL_TAGS.map((tag) => (
+              {tags.map((tag) => (
                 <label
                   key={tag}
                   className="flex cursor-pointer items-center gap-2 text-sm"

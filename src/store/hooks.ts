@@ -10,6 +10,7 @@ import {
   uiResetError,
 } from "./actions";
 import { areTagsLoaded, getFilters, getIsLogged, getTags } from "./selectors";
+import type { Tag } from "../pages/advert/types";
 
 export function useAuth() {
   return useAppSelector(getIsLogged);
@@ -47,7 +48,7 @@ export function useTags() {
     }
   }, [loaded, dispatch]);
 
-  return tags;
+  return tags as Tag[];
 }
 
 export function useFilters() {
