@@ -41,13 +41,14 @@ function LoginPage() {
         <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
           <div className="sm:col-span-3">
             <label
-              htmlFor="name"
+              htmlFor="email"
               className="block text-sm font-medium text-gray-700"
             >
               Email
             </label>
             <div className="mt-2">
               <input
+                id="email"
                 type="email"
                 name="email"
                 value={email}
@@ -67,6 +68,7 @@ function LoginPage() {
             </label>
             <div className="mt-2">
               <input
+                id="password"
                 type="password"
                 name="password"
                 value={password}

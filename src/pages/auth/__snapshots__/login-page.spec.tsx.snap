@@ -16,7 +16,7 @@ exports[`LoginPage > should render 1`] = `
         >
           <label
             class="block text-sm font-medium text-gray-700"
-            for="name"
+            for="email"
           >
             Email
           </label>
@@ -25,6 +25,7 @@ exports[`LoginPage > should render 1`] = `
           >
             <input
               class="block w-full rounded-lg border border-gray-300 bg-white px-4 py-2 text-base text-gray-900 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+              id="email"
               name="email"
               type="email"
               value=""
@@ -49,6 +50,7 @@ exports[`LoginPage > should render 1`] = `
           >
             <input
               class="block w-full rounded-lg border border-gray-300 bg-white px-4 py-2 text-base text-gray-900 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+              id="password"
               name="password"
               type="password"
               value=""
