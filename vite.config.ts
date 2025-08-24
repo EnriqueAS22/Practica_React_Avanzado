@@ -10,5 +10,7 @@ export default defineConfig({
     coverage: {
       provider: "v8",
     },
+    environment: "jsdom",
+    setupFiles: "./vitest.setup.ts",
   },
 });
