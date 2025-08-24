@@ -7,5 +7,8 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   test: {
     globals: true,
+    coverage: {
+      provider: "v8",
+    },
   },
 });
