@@ -22,10 +22,15 @@ describe("advertsLoadedFulfilled", () => {
     // @ts-expect-error: just for testing, not valid adverts
     const result = advertsLoadedFulfilled(adverts);
     expect(result).toEqual(expected);
+    expect(result.payload).toHaveLength(2);
   });
 });
 
 describe("authLogin", () => {
+  afterEach(() => {
+    dispatch.mockClear();
+    router.navigate.mockClear();
+  });
   const credentials: Credentials = {
     email: "user@mail.com",
     password: "1234",
@@ -58,22 +63,22 @@ describe("authLogin", () => {
     expect(router.navigate).toHaveBeenCalledWith(from, { replace: true });
   });
 
-  // test("when login rejects", async () => {
-  //   const error = new Error("unauthorized");
-  //   api.auth.login = vi.fn().mockRejectedValue(error);
+  test("when login rejects", async () => {
+    const error = new Error("unauthorized");
+    api.auth.login = vi.fn().mockRejectedValue(error);
 
-  //   await expect(() =>
-  //     // @ts-expect-error: no need getState
-  //     thunk(dispatch, undefined, { api, router }),
-  //   ).rejects.toThrowError(error);
+    await expect(() =>
+      // @ts-expect-error: no need getState
+      thunk(dispatch, undefined, { api, router }),
+    ).rejects.toThrowError(error);
 
-  //   expect(dispatch).toHaveBeenCalledTimes(2);
-  //   expect(dispatch).toHaveBeenNthCalledWith(1, { type: "auth/login/pending" });
-  //   expect(dispatch).toHaveBeenNthCalledWith(2, {
-  //     type: "auth/login/rejected",
-  //     payload: error,
-  //   });
+    expect(dispatch).toHaveBeenCalledTimes(2);
+    expect(dispatch).toHaveBeenNthCalledWith(1, { type: "auth/login/pending" });
+    expect(dispatch).toHaveBeenNthCalledWith(2, {
+      type: "auth/login/rejected",
+      payload: error,
+    });
 
-  //   expect(router.navigate).not.toHaveBeenCalled();
-  // });
+    expect(router.navigate).not.toHaveBeenCalled();
+  });
 });
